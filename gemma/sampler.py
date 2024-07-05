@@ -104,7 +104,8 @@ class Sampler:
     self.transformer = transformer
     self.vocab = vocab
     self.params = params
-    self._compiled_sample_fn = jax.jit(self._sample_fn)
+    # self._compiled_sample_fn = jax.jit(self._sample_fn)
+    self._compiled_sample_fn = self._sample_fn_no_jax
 
   @property
   def dtype(self) -> jnp.dtype:
@@ -241,6 +242,27 @@ class Sampler:
     return jax.lax.while_loop(
         cond_fn, sample_with_params, initial_sampling_state
     )
+
+  def _sample_fn_no_jax(
+      self,
+      params: params_lib.Params,
+      initial_sampling_state: _SamplingState,
+  ) -> _SamplingState:
+    """Internal sampling function (to be jitted)."""
+
+    sampler_state = initial_sampling_state
+
+    while (
+          sampler_state.decoding_step < sampler_state.total_sampling_steps
+      ) & jnp.any(jnp.logical_not(sampler_state.done)):
+      print(sampler_state.token_buffer)
+      sampler_state = self._sample_step(params, sampler_state)
+    
+    return sampler_state
+
+
+
+
 
   def __call__(
       self,

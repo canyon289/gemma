@@ -40,24 +40,27 @@ from gemma import transformer as transformer_lib
 
 import sentencepiece as spm
 
-_PATH_CHECKPOINT = flags.DEFINE_string(
-    "path_checkpoint", None, required=True, help="Path to checkpoint."
-)
-_PATH_TOKENIZER = flags.DEFINE_string(
-    "path_tokenizer", None, required=True, help="Path to tokenizer."
-)
-_TOTAL_GENERATION_STEPS = flags.DEFINE_integer(
-    "total_sampling_steps",
-    128,
-    help="Maximum number of step to run when decoding.",
-)
-_STRING_TO_SAMPLE = flags.DEFINE_string(
-    "string_to_sample",
-    "Where is Paris ?",
-    help="Input string to sample.",
-)
+import jax
+jax.config.update('jax_platform_name', 'cpu')
 
-_CACHE_SIZE = 1024
+# _PATH_CHECKPOINT = flags.DEFINE_string(
+#     "path_checkpoint", None, required=True, help="Path to checkpoint."
+# )
+# _PATH_TOKENIZER = flags.DEFINE_string(
+#     "path_tokenizer", None, required=True, help="Path to tokenizer."
+# )
+# _TOTAL_GENERATION_STEPS = flags.DEFINE_integer(
+#     "total_sampling_steps",
+#     128,
+#     help="Maximum number of step to run when decoding.",
+# )
+# _STRING_TO_SAMPLE = flags.DEFINE_string(
+#     "string_to_sample",
+#     "Where is Paris ?",
+#     help="Input string to sample.",
+# )
+
+# _CACHE_SIZE = 1024
 
 
 def _load_and_sample(
@@ -75,6 +78,7 @@ def _load_and_sample(
   # Create a sampler with the right param shapes.
   vocab = spm.SentencePieceProcessor()
   vocab.Load(path_tokenizer)
+  
   transformer_config = transformer_lib.TransformerConfig.from_params(
       parameters,
       cache_size=cache_size
@@ -99,12 +103,20 @@ def main(argv: Sequence[str]) -> None:
   if len(argv) > 1:
     raise app.UsageError("Too many command-line arguments.")
 
+#   _load_and_sample(
+#       path_checkpoint=_PATH_CHECKPOINT.value,
+#       path_tokenizer=_PATH_TOKENIZER.value,
+#       input_string=_STRING_TO_SAMPLE.value,
+#       cache_size=_CACHE_SIZE,
+#       total_generation_steps=_TOTAL_GENERATION_STEPS.value,
+#   )
+
   _load_and_sample(
-      path_checkpoint=_PATH_CHECKPOINT.value,
-      path_tokenizer=_PATH_TOKENIZER.value,
-      input_string=_STRING_TO_SAMPLE.value,
-      cache_size=_CACHE_SIZE,
-      total_generation_steps=_TOTAL_GENERATION_STEPS.value,
+      path_checkpoint="/home/canyon/repos/gemma/2b-it",
+      path_tokenizer="/home/canyon/repos/gemma/tokenizer.model",
+      input_string="Say hi",
+      cache_size=1024,
+      total_generation_steps=13,
   )
 
 
