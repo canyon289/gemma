@@ -106,6 +106,10 @@ class TransformerConfig:
 
     num_embed = params['transformer']['embedder']['input_embedding'].shape[0]
 
+    print(f"num_embed: {num_embed}")
+    print(f"embed_dim: {embed_dim}")
+    print(f"head_dim: {head_dim}")
+
     return cls(
         num_layers=num_layers,
         num_embed=num_embed,

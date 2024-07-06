@@ -261,9 +261,6 @@ class Sampler:
     return sampler_state
 
 
-
-
-
   def __call__(
       self,
       input_strings: Sequence[str],
@@ -296,6 +293,8 @@ class Sampler:
     sampling_state = self._compiled_sample_fn(
         self.params, initial_sampling_state
     )
+
+    # self.params["layer_1"]["attn"]["q_einsum"]["w"].shape
 
     out_tokens = []
     out_logits = []

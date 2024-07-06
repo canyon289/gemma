@@ -83,6 +83,8 @@ class Attention(nn.Module):
       attn_mask: jax.Array,
   ) -> tuple[LayerCache | None, jax.Array]:
     seq_len = x.shape[1]
+    print(seq_len)
+    print(x.shape)
 
     if self.use_qkv_einsum:
       query_proj, key_proj, value_proj = self.qkv_einsum('BTD,SNDH->SBTNH', x)
@@ -214,6 +216,7 @@ class Block(nn.Module):
       cache: LayerCache | None,
       attn_mask: jax.Array,
   ) -> tuple[LayerCache | None, jax.Array]:
+    print(f"Block X shape: {x.shape}")
     inputs_normalized = self.pre_attention_norm(x)
     cache, attn_output = self.attn(
         inputs_normalized,
